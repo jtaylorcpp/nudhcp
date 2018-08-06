@@ -1,4 +1,4 @@
-package nudhcp
+package main
 
 import (
 	"fmt"
