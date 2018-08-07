@@ -1,4 +1,4 @@
-package nudhcp
+ t.Errorf("First address %v should be 192.168.1.1\n",firstAddress1)package nudhcp
 
 import (
 	"fmt"

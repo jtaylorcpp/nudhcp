@@ -92,7 +92,7 @@ func NewDHCPServer(iface, serverAddr, subnet, gateway, dns string,
 	log.Printf("  using gateway address %v\n", gateway)
 	server.gatewayAddr = net.ParseIP(gateway)
 	log.Printf("  using dns address %v\n", dns)
-	server.dnsAddr = net.ParseIP(gateway)
+	server.dnsAddr = net.ParseIP(dns)
 	server.leases = make(map[string]*dhcplease)
 	server.ReserveStaticLeases(server.serverAddr, server.gatewayAddr, server.dnsAddr)
 	server.PrintReservedLeases()
