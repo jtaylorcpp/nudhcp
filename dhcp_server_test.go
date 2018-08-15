@@ -96,4 +96,7 @@ func TestDHCPServer(t *testing.T) {
 		ds.ReserveStaticLeases(nextIp)
 	}
 
+	if _,assigned := ds.findMacAssigned("will fail"); assigned {
+		t.Error("Invalid MAC address \"will fail\"")
+	}
 }

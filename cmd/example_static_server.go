@@ -7,7 +7,7 @@ import (
 	"github.com/jtaylorcpp/nudhcp"
 )
 
-func main() {
+func example_main() {
 	fmt.Println("Test!")
 	// interface, server address, subnet to address, gateway, dns, lease time
 	dhcps := nudhcp.NewDHCPServer("eth1", "192.168.2.2", "192.168.2.0/24",
