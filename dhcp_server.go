@@ -236,7 +236,7 @@ func (ds *DHCPServer) ServeDHCP(p dhcp4.Packet, msgType dhcp4.MessageType, opts 
 	return nil
 }
 
-func (ds *DHCPServer) Start() {
+func (ds *DHCPServer) Start(statusChan chan<- error) {
 	if ds.iface != "" {
 		log.Printf("DHCP SERVER: starting and bound to %v...\n", ds.iface)
 		//udpConn, err := conn.NewUDP4FilterListener(ds.iface, ":67")
@@ -248,6 +248,6 @@ func (ds *DHCPServer) Start() {
 		log.Fatal(dhcp4.Serve(udpConn, ds))
 	} else {
 		log.Printf("DHCP SERVER: starting...\n")
-		log.Fatal(dhcp4.ListenAndServe(ds))
+		statusChan <- dhcp4.ListenAndServe(ds)
 	}
 }

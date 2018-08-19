@@ -12,7 +12,13 @@ type DHCPManager struct {
 
 func (dm *DHCPManager) StartDHCPServers() {
 	log.Printf("Starting DHCP Servers...")
+	statusChan := make(chan error, 1)
+	defer close(statusChan)
 	for  _, server := range dm.servers {
-		go server.Start()
+		go server.Start(statusChan)
+	}
+
+	for statusMsg := range statusChan {
+		log.Fatal(statusMsg)
 	}
 }

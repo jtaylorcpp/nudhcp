@@ -21,5 +21,6 @@ var runCmd = &cobra.Command {
 		log.Println("starting dhcp servers from file: ",configFile)
 		dhcpManager := nudhcp.LoadFromFile(configFile)
 		log.Println("dhcp servers: ",dhcpManager)
+		dhcpManager.StartDHCPServers()
 	},
 }
