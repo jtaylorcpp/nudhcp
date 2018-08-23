@@ -100,3 +100,11 @@ func TestDHCPServer(t *testing.T) {
 		t.Error("Invalid MAC address \"will fail\"")
 	}
 }
+
+func TestDefaultDHCPOptions(t *testing.T) {
+	opts := GetDefaultDHCPOptions(net.ParseIP("0.0.0.0"),
+		net.ParseIP("1.1.1.1"),
+		net.ParseIP("2.2.2.2"))
+
+	t.Log("default opts: ",opts)
+}

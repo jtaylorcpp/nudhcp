@@ -85,7 +85,7 @@ func NewDHCPServer(iface, serverAddr, subnet, gateway, dns string,
 	log.Printf("  using interface %v\n", iface)
 	server.iface = iface
 	log.Printf("  using server address %v\n", serverAddr)
-	server.serverAddr = net.ParseIP(serverAddr)
+	server.serverAddr = net.ParseIP(serverAddr).To4()
 	log.Printf("  serving subnet %v\n", subnet)
 	_, ipNet, err := net.ParseCIDR(subnet)
 	if err != nil {
@@ -107,7 +107,7 @@ func NewDHCPServer(iface, serverAddr, subnet, gateway, dns string,
 	server.PrintReservedLeases()
 	server.leaseDuration = duration
 	server.options = GetDefaultDHCPOptions(net.IP(server.netmask.Mask),
-		server.gatewayAddr, server.dnsAddr)
+		server.gatewayAddr.To4(), server.dnsAddr.To4())
 
 	return server
 }
@@ -187,9 +187,11 @@ func (ds *DHCPServer) ServeDHCP(p dhcp4.Packet, msgType dhcp4.MessageType, opts 
 		log.Printf("DHCP DISCOVER: %v possible new address -> %v\n", p.CHAddr(), addr)
 		if !addr.Equal(net.IPv4zero) {
 			log.Printf("DHCP DISCOVER: %v assigned %v\n", p.CHAddr(), addr)
-			return dhcp4.ReplyPacket(p, dhcp4.Offer, ds.serverAddr, addr,
+			replyPacket :=  dhcp4.ReplyPacket(p, dhcp4.Offer, ds.serverAddr, addr,
 				ds.leaseDuration,
 				ds.options.SelectOrderOrAll(opts[dhcp4.OptionParameterRequestList]))
+
+			return replyPacket
 		}
 		log.Printf("DHCP DISCOVER: nothing returned for %v\n", p)
 	case dhcp4.Request:
@@ -215,9 +217,11 @@ func (ds *DHCPServer) ServeDHCP(p dhcp4.Packet, msgType dhcp4.MessageType, opts 
 					}
 					log.Printf("DHCP REQUEST: new lease assigned %v...\n",
 						ds.leases[requestedIP.String()])
-					return dhcp4.ReplyPacket(p, dhcp4.ACK, ds.serverAddr,
-						requestedIP, ds.leaseDuration,
-						ds.options.SelectOrderOrAll(opts[dhcp4.OptionParameterRequestList]))
+						returnPacket :=  dhcp4.ReplyPacket(p, dhcp4.ACK, ds.serverAddr,
+								requestedIP, ds.leaseDuration,
+								ds.options.SelectOrderOrAll(opts[dhcp4.OptionParameterRequestList]))
+						log.Printf("%v\n", returnPacket)
+						return returnPacket
 				}
 			}
 		}
